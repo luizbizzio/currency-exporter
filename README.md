@@ -5,7 +5,7 @@
 This script collects and exports real-time exchange rates for various currency pairs to Prometheus. Using the AwesomeAPI, it retrieves the latest exchange rates and makes them available for monitoring in Prometheus, which can then be visualized in Grafana.
 
 <div align="center">
-   <img src="metrics.png" alt="Metrics" width="500"/>
+   <img src="metrics.png" alt="Metrics" width="800"/>
 </div>
 
 ## Features 🌟
