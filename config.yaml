@@ -1,7 +1,10 @@
 currencies:
-  - GBP_EUR
-  - EUR_BRL
-  - USD_BRL
-  - BTC_USD
-  - EUR_USD
-  - CNY_USD
+  - GBP-EUR  # British Pound to Euro
+  - EUR-BRL  # Euro to Brazilian Real
+  - USD-EUR  # US Dollar to Euro
+  - BTC-USD  # Bitcoin to US Dollar
+  - CNY-USD  # Chinese Yuan to US Dollar
+  - USD-JPY  # US Dollar to Japanese Yen
+  - EUR-USD  # Euro to US Dollar
+  - ETH-USD  # Ethereum to US Dollar
+  - GBP-USD  # British Pound to US Dollar
