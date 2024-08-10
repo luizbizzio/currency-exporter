@@ -1,2 +1,2 @@
-# currency_exporter
+# Currency Exporter
 Prometheus exporter written in Python to provide currency exchange rate metrics.
