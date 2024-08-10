@@ -20,7 +20,7 @@ def update_gauges(data):
 
 def main():
     config = load_config()
-    url = URL_TEMPLATE.format(','.join(pair.replace('_', '-') for pair in config.get('currencies', [])))
+    url = URL_TEMPLATE.format(','.join(config.get('currencies', [])))
     
     global gauges
     gauges = {}
