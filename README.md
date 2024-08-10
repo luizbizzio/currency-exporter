@@ -20,7 +20,7 @@ This script collects and exports real-time exchange rates for various currency p
 
 ## Configuration ⚙️
 
-2. **API Configuration:**
+1. **API Configuration:**
 
    Update the `config.yaml` file with the currency pairs you want to monitor. The format used is `BASE_CURRENCY-TARGET_CURRENCY`, where:
 
