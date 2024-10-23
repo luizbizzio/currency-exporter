@@ -83,7 +83,7 @@ This script collects and exports real-time exchange rates for various currency p
      
    - **API Limitations:** Be aware of any rate limits or restrictions imposed by the AwesomeAPI.
 
-# License
+# License 📄
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
