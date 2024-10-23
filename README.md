@@ -77,13 +77,13 @@ This script collects and exports real-time exchange rates for various currency p
    http://localhost:7575/metrics
    ```
 
-# Notes 📝
+## Notes 📝
 
    - **Currency Pairs:** Ensure that the currency pairs in `config.yaml` follow the format `BASE_CURRENCY-TARGET_CURRENCY`, where each currency is represented by its standard ISO code. For example, `USD-BRL` is for US Dollars to Brazilian Reais.
      
    - **API Limitations:** Be aware of any rate limits or restrictions imposed by the AwesomeAPI.
 
-# License 📄
+## License 📄
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
