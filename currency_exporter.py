@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026 Luiz Bizzio
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+
 import requests
 from prometheus_client import start_http_server, Gauge, CollectorRegistry, generate_latest, REGISTRY
 import yaml
@@ -47,3 +50,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
