@@ -1,91 +1,198 @@
 # Currency Exporter 💱📈
 
-## Overview 📊
+Prometheus exporter for **currency exchange rates**.
 
-This script collects and exports real-time exchange rates for various currency pairs to Prometheus. Using the AwesomeAPI, it retrieves the latest exchange rates and makes them available for monitoring in Prometheus, which can then be visualized in Grafana.
+It fetches rates from a public dataset on an interval and exposes metrics on `/metrics`.  
+This exporter is for monitoring and dashboards. It is not for trading or real time pricing.
 
-<div align="center">
-   <img src="metrics.png" alt="Metrics" width="800"/>
-</div>
+## Examples (Grafana)
 
-## Features 🌟
-   
-   - **Exchange Rate Collection:** Fetches real-time exchange rates from the AwesomeAPI for a configurable list of currency pairs.
-   
-   - **Prometheus Integration:** Provides metrics in a format compatible with Prometheus scraping.
-   
-   - **Flexible Configuration:** Easily configurable to include the currency pairs you are interested in via a `config.yaml` file.
-   
-   - **Efficient Performance:** Designed to handle multiple currency pairs with minimal resource usage.
+These screenshots are examples.
 
-## Configuration ⚙️
+### Time series panel
 
-1. **API Configuration:**
+<p align="center">
+  <img src="images/metrics.png" alt="Grafana time series example" width="700"/>
+</p>
 
-   Update the `config.yaml` file with the currency pairs you want to monitor. The format used is `BASE_CURRENCY-TARGET_CURRENCY`, where:
+### Stat panel
 
-   - **BASE_CURRENCY** is the currency you are converting from.
-   - **TARGET_CURRENCY** is the currency you are converting to.
+<p align="center">
+  <img src="images/metrics2.png" alt="Grafana stat example" width="700"/>
+</p>
 
-   Each currency pair should be separated by a hyphen. For example, to get the exchange rate from US Dollars (USD) to Brazilian Reais (BRL), you would use `USD-BRL`.
+## How it works
 
-   Example `config.yaml`:
-   
-      ```yaml
-   currencies:
-     - USD-BRL
-     - EUR-BRL
-     - GBP-BRL
-      ```
-   In this example:
-   
-   - `USD-BRL` retrieves the exchange rate from US Dollars to Brazilian Reais. 
-   
-   - `USD-BRL` retrieves the exchange rate from US Dollars to Brazilian Reais.
-   
-   - `USD-BRL` retrieves the exchange rate from US Dollars to Brazilian Reais.
+- You define the currency pairs in `config.yaml` (example: `EUR-USD`, `USD-BRL`).
+- The exporter chooses a pivot currency (it prefers `USD` if it appears in your pairs).
+- It downloads **one** JSON snapshot for the pivot currency and builds a lookup table of rates.
+- Each configured pair is calculated from the snapshot using cross rate math.
+- Prometheus scraping does not trigger extra API calls. The exporter serves cached values until the next update cycle.
 
-2. **Exporter Port (Optional):**
+If a currency code does not exist in the snapshot (example: `ABC-USD`), the exporter stays up, but marks the pair as unsupported.
 
-   Set the port for the Prometheus exporter in the script:
-   
-   ```python
-   PORT = 7575
-   ```
+## Features 📊
 
-## Usage 🚀
+- Metrics on `/metrics`
+- Pair based config in `config.yaml`
+- One snapshot request per update cycle
+- Cached results (Prometheus scrapes are cheap)
+- Retries with exponential backoff for temporary network issues
+- Health and config metrics for alerting
+- Optional default Python and process metrics (`expose_default_metrics`)
 
-1. **Install Dependencies:**
+## Data source
 
-   Install the required Python packages:
-   
-   ```sh
-   pip install requests prometheus_client pyyaml
-   ```
+- Project: https://github.com/fawazahmed0/exchange-api  
+- Symbols list (all supported codes):  
+  https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json
 
-2. **Run the Script:**
+The upstream dataset updates daily. Updating more frequently than 24h will usually return the same values.  
+Your exporter update frequency is controlled by `update_interval_seconds`.
 
-   Launch the script to start the Prometheus exporter:
-   
-   ```sh
-   python currency_exporter.py
-   ```
+## Requirements
 
-3. **Access Metrics:**
+- Python 3.10+ (3.11 recommended)  
+- Or Docker  
+- Network access to the data source
 
-   ```init
-   http://localhost:7575/metrics
-   ```
+## Install ⚙️
 
-## Notes 📝
+Before running, edit `config.yaml` and set the currency pairs you want in `pairs:`.  
+This repository includes a `config.yaml` example. It is not meant to be used as-is.
 
-   - **Currency Pairs:** Ensure that the currency pairs in `config.yaml` follow the format `BASE_CURRENCY-TARGET_CURRENCY`, where each currency is represented by its standard ISO code. For example, `USD-BRL` is for US Dollars to Brazilian Reais.
-     
-   - **API Limitations:** Be aware of any rate limits or restrictions imposed by the AwesomeAPI.
+### Python 🐍
 
-## License 📄
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run:
+
+```bash
+python currency_exporter.py
+```
+
+Test:
+
+```bash
+curl http://localhost:7575/metrics
+```
+
+### Docker 🐳 (GHCR)
+
+Pull:
+
+```bash
+docker pull ghcr.io/luizbizzio/currency-exporter:latest
+```
+
+Run (mount your `config.yaml`):
+
+```bash
+docker run -d   --name currency-exporter   -p 7575:7575   -v "$(pwd)/config.yaml:/config/config.yaml:ro"   --restart unless-stopped   ghcr.io/luizbizzio/currency-exporter:latest   --config-file /config/config.yaml
+```
+
+Test:
+
+```bash
+curl http://localhost:7575/metrics
+```
+
+Notes:
+- If you change `server.port` in `config.yaml`, update the `-p` mapping too.
+- The container is stateless. Any config change requires a container restart.
+
+## Configuration 🛠️
+
+Edit `config.yaml`:
+
+```yaml
+server:
+  port: 7575
+  timeout_seconds: 10
+  update_interval_seconds: 86400
+  retries: 3
+  retry_backoff_seconds: 1
+  expose_default_metrics: false
+  log_level: INFO
+
+pairs:
+  - BTC-USD
+  - EUR-BRL
+  - USD-BRL
+  - GBP-EUR
+  - EUR-USD
+  - CNY-USD
+```
+
+Notes:
+- Pair format is `BASE-QUOTE` like `USD-BRL`.
+- If a code does not exist, the exporter will set:
+  - `currency_pair_supported = 0`
+  - `currency_exporter_config_invalid_pairs > 0`
+
+## Prometheus scrape config
+
+```yaml
+scrape_configs:
+  - job_name: "currency-exporter"
+    static_configs:
+      - targets: ["YOUR_EXPORTER_IP:7575"]
+```
+
+Tip:
+If you update once per day, increase `scrape_interval` for this job (example: 1h) to reduce storage and noise.
+
+## Grafana queries
+
+Single pair:
+
+```promql
+currency_exchange_rate{base="EUR",quote="USD"}
+```
+
+Many pairs in one panel:
+
+```promql
+currency_exchange_rate{base=~"EUR|USD|GBP|CNY|BTC",quote=~"USD|EUR|BRL"}
+```
+
+Legend format:
+
+`{{base}}-{{quote}}`
+
+## Metrics
+
+| Name | Type | Description |
+|---|---|---|
+| `currency_exchange_rate{base,quote}` | Gauge | Exchange rate from base to quote |
+| `currency_pair_supported{base,quote}` | Gauge | 1 if pair is supported in current snapshot, else 0 |
+| `currency_exporter_up` | Gauge | 1 if last update succeeded, else 0 |
+| `currency_exporter_last_update_timestamp` | Gauge | Unix timestamp of last update attempt |
+| `currency_exporter_last_success_timestamp` | Gauge | Unix timestamp of last successful update |
+| `currency_exporter_update_duration_seconds` | Gauge | Duration of last update |
+| `currency_exporter_errors_total` | Counter | Total number of update errors |
+| `currency_exporter_config_invalid_pairs` | Gauge | Number of configured pairs missing in snapshot |
+| `currency_exporter_invalid_pairs_total` | Counter | Number of update cycles that had missing pairs |
+| `currency_exporter_snapshot_info{date,pivot}` | Gauge | Snapshot date and pivot info |
+
+## Troubleshooting 🔍
+
+If you do not see `currency_exchange_rate`:
+- Open `/metrics` and search for `currency_`.
+- Confirm the exporter is running on the expected port.
+- Check logs. A bad URL or timeout will set `currency_exporter_up = 0`.
+
+If `currency_exporter_config_invalid_pairs > 0`:
+- One or more codes in `pairs` do not exist in the current snapshot.
+- Check the symbols list:
+  https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json
+
+## License
 
 This project is licensed under the [PolyForm Noncommercial License 1.0.0](./LICENSE).
 
 Commercial use, resale, and paid services are not permitted.
-
