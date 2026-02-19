@@ -1,10 +1,16 @@
-currencies:
-  - GBP-EUR  # British Pound to Euro
-  - EUR-BRL  # Euro to Brazilian Real
-  - USD-EUR  # US Dollar to Euro
-  - BTC-USD  # Bitcoin to US Dollar
-  - CNY-USD  # Chinese Yuan to US Dollar
-  - USD-JPY  # US Dollar to Japanese Yen
-  - EUR-USD  # Euro to US Dollar
-  - ETH-USD  # Ethereum to US Dollar
-  - GBP-USD  # British Pound to US Dollar
+server:
+  port: 7575
+  timeout_seconds: 10
+  update_interval_seconds: 21600
+  retries: 3
+  retry_backoff_seconds: 1
+  expose_default_metrics: false
+  log_level: INFO
+
+pairs:
+  - BTC-USD
+  - EUR-BRL
+  - USD-BRL
+  - GBP-EUR
+  - EUR-USD
+  - CNY-USD
