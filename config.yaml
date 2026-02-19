@@ -1,11 +1,14 @@
 server:
   port: 7575
   timeout_seconds: 10
-  update_interval_seconds: 21600
+  update_interval_seconds: 28800
   retries: 3
   retry_backoff_seconds: 1
   expose_default_metrics: false
   log_level: INFO
+
+# Data source: https://github.com/fawazahmed0/exchange-api
+# Symbols list: https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json
 
 pairs:
   - BTC-USD
@@ -14,3 +17,4 @@ pairs:
   - GBP-EUR
   - EUR-USD
   - CNY-USD
+
