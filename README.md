@@ -113,7 +113,7 @@ Edit `config.yaml`:
 server:
   port: 7575
   timeout_seconds: 10
-  update_interval_seconds: 86400
+  update_interval_seconds: 28800
   retries: 3
   retry_backoff_seconds: 1
   expose_default_metrics: false
