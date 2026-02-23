@@ -1,0 +1,23 @@
+web:
+  listen_address: "0.0.0.0:9131"
+  telemetry_path: "/metrics"
+
+scrape:
+  timeout_seconds: 10
+  update_interval_seconds: 28800
+  retries: 3
+  retry_backoff_seconds: 1
+  expose_default_metrics: false
+  log_level: INFO
+
+# Data source: https://github.com/fawazahmed0/exchange-api
+# Symbols list: https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json
+pairs:
+  - BTC-USD
+  - EUR-BRL
+  - USD-BRL
+  - GBP-EUR
+  - EUR-USD
+  - CNY-USD
+
+
