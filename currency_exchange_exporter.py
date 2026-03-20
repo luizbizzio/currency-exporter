@@ -19,6 +19,7 @@ from wsgiref.simple_server import WSGIServer, WSGIRequestHandler, make_server
 
 
 API_URL_TEMPLATE = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/{base}.json"
+REPO_URL = "https://github.com/luizbizzio/currency-exchange-exporter"
 
 
 def load_config(path: str) -> dict:
@@ -160,6 +161,9 @@ class CurrencyExporter:
             len(self.pairs),
             self.expose_default_metrics,
         )
+        
+        if os.environ.get("CURRENCY_EXPORTER_HIDE_STAR_HINT", "").strip().lower() not in ("1", "true", "yes", "on"):
+            logging.info("documentation and updates: %s | if this exporter helped you, consider starring the repo", REPO_URL)
 
     def is_ready(self) -> bool:
         with self._lock:
