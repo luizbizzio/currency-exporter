@@ -1,4 +1,4 @@
-<h1 align="center">Currency Exporter</h1>
+<h1 align="center">Currency Exporter 💱</h1>
 
 <h3 align="center"> Prometheus exporter for currency exchange rates.</h3>
 
