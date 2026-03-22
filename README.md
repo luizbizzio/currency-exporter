@@ -1,6 +1,6 @@
-# Currency Exporter 💱📈
+<h1 align="center">Currency Exporter</h1>
 
-Prometheus exporter for **currency exchange rates**.
+### Prometheus exporter for **currency exchange rates**.
 
 It fetches rates from a public dataset on an interval and exposes metrics on `/metrics`.  
 This exporter is for monitoring and dashboards. It is not for trading or real time pricing.
