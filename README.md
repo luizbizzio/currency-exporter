@@ -1,9 +1,9 @@
 <h1 align="center">Currency Exporter</h1>
 
-### Prometheus exporter for **currency exchange rates**.
+<h3 align="center"> Prometheus exporter for currency exchange rates.</h3>
 
-It fetches rates from a public dataset on an interval and exposes metrics on `/metrics`.  
-This exporter is for monitoring and dashboards. It is not for trading or real time pricing.
+<p align="center">It fetches rates from a public dataset on an interval and exposes metrics on `/metrics`.</p>
+<p align="center">This exporter is for monitoring and dashboards. It is not for trading or real time pricing.</p>
 
 ## Examples (Grafana)
 
