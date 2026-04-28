@@ -72,7 +72,7 @@ pip install -r requirements.txt
 Run:
 
 ```bash
-python currency_exporter.py
+python currency_exchange_exporter.py
 ```
 
 Test:
